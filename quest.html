@@ -1,0 +1,810 @@
+questionnaire.html <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Questionnaire - Capture Your Moment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .question-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .question-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option-button {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 1rem;
+            color: #2d3748;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-button:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .option-button.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .option-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .option-button:hover::before {
+            left: 100%;
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 15px;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .secondary-button {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(102, 126, 234, 0.05);
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .loader.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .budget-result {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .budget-result.active {
+            display: block;
+        }
+
+        .budget-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .checkbox-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .checkbox-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .checkbox-item.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .edit-summary {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .edit-summary h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .edit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .edit-button {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .edit-button:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .question-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- Welcome Screen -->
+            <div class="question-container active" id="q0">
+                <h1>Event Questionnaire</h1>
+                <p class="subtitle">Let's capture your event the way it deserves</p>
+                <div class="question-title">Are you ready to work with the best in the game?</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(0, 'yes')">
+                        ✨ Yes, Let's Go
+                    </button>
+                    <button class="option-button" onclick="selectOption(0, 'skip')">
+                        ⏭️ Skip
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question 1: Event Type -->
+            <div class="question-container" id="q1">
+                <div class="question-title">What type of content you are looking for?</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(1, 'conference')">📊 Conference or Seminar</button>
+                    <button class="option-button" onclick="selectOption(1, 'concert')">🎵 Concert or Festival</button>
+                    <button class="option-button" onclick="selectOption(1, 'product')">🚀 Product Launch / Brand Reveal</button>
+                    <button class="option-button" onclick="selectOption(1, 'award')">🏆 Award Show or Gala</button>
+                    <button class="option-button" onclick="selectOption(1, 'virtual')">💻 Virtual or Hybrid Event</button>
+                    <button class="option-button" onclick="selectOption(1, 'expo')">🏢 Expo or Trade Show</button>
+                    <button class="option-button" onclick="selectOption(1, 'other')">✨ Something Else</button>
+                </div>
+                <div id="otherEventInput" style="display: none;">
+                    <input type="text" class="input-field" placeholder="Tell us about your unique event" id="otherEventText">
+                </div>
+            </div>
+
+            <!-- Question 2: Capture Style -->
+            <div class="question-container" id="q2">
+                <div class="question-title">How would you like your event to be captured?</div>
+                <div class="question-subtitle">Optional — helps us match the right team and edit style</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(2, 'cinematic')">🎬 Cinematic & Artistic</button>
+                    <button class="option-button" onclick="selectOption(2, 'high-energy')">⚡ High-Energy & Fun</button>
+                    <button class="option-button" onclick="selectOption(2, 'professional')">💼 Professional & Clean</button>
+                    <button class="option-button" onclick="selectOption(2, 'emotional')">❤️ Emotional & Heartfelt</button>
+                    <button class="option-button" onclick="selectOption(2, 'not-sure')">🤷 Not sure yet</button>
+                </div>
+            </div>
+
+            <!-- Question 3: Duration -->
+            <div class="question-container" id="q3">
+                <div class="question-title">How long is your event?</div>
+                <div class="question-subtitle">Choose the duration that best fits your schedule</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(3, 'half-day')">🕐 2–4 hours (Half day)</button>
+                    <button class="option-button" onclick="selectOption(3, 'full-day')">🕘 5–8 hours (Full day)</button>
+                    <button class="option-button" onclick="selectOption(3, 'multi-day')">📅 Multi-day event</button>
+                    <button class="option-button" onclick="selectOption(3, 'not-sure')">🤷 Not sure yet</button>
+                </div>
+                <div id="multiDayInput" style="display: none;">
+                    <input type="number" class="input-field" placeholder="Enter number of days" id="multiDayNumber" min="2" max="30">
+                </div>
+            </div>
+
+            <!-- Question 4: Audience Size -->
+            <div class="question-container" id="q4">
+                <div class="question-title">How big is your audience or guest list?</div>
+                <div class="question-subtitle">This helps us plan crew, lenses, and coverage style</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(4, 'small')">👥 1–20 people (Small, intimate)</button>
+                    <button class="option-button" onclick="selectOption(4, 'medium')">👨‍👩‍👧‍👦 20–100 (Medium-sized)</button>
+                    <button class="option-button" onclick="selectOption(4, 'large')">🏟️ 100–500 (Large event)</button>
+                    <button class="option-button" onclick="selectOption(4, 'massive')">🎪 500+ (Massive production)</button>
+                    <button class="option-button" onclick="selectOption(4, 'not-sure')">🤷 Not sure yet</button>
+                </div>
+            </div>
+
+            <!-- Question 5: Production Support -->
+            <div class="question-container" id="q5">
+                <div class="question-title">Do you need full production support?</div>
+                <div class="question-subtitle">Like livestreams, staging, or on-site crew (Optional — for larger events or corporate shoots)</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(5, 'yes')">✅ Yes</button>
+                    <button class="option-button" onclick="selectOption(5, 'no')">❌ No</button>
+                    <button class="option-button" onclick="selectOption(5, 'not-sure')">🤷 Not sure yet</button>
+                </div>
+            </div>
+
+            <!-- Question 6: Drone Shots -->
+            <div class="question-container" id="q6">
+                <div class="question-title">Want to capture some epic drone shots from above?</div>
+                <div class="question-subtitle">Add stunning aerial views to your event coverage</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(6, 'yes')">🚁 Yes</button>
+                    <button class="option-button" onclick="selectOption(6, 'no')">❌ No</button>
+                </div>
+            </div>
+
+            <!-- Question 7: Same Day Highlights -->
+            <div class="question-container" id="q7">
+                <div class="question-title">Need quick-turn recap videos or photos to share the same day?</div>
+                <div class="question-subtitle">Keep the buzz alive while the event is still happening</div>
+                <div class="options-grid">
+                    <button class="option-button" onclick="selectOption(7, 'yes')">⚡ Yes, I Need Same-Day Highlights</button>
+                    <button class="option-button" onclick="selectOption(7, 'no')">❌ No, Not Required</button>
+                </div>
+            </div>
+
+            <!-- Question 8: Location -->
+            <div class="question-container" id="q8">
+                <div class="question-title">Where is your event happening?</div>
+                <input type="text" class="input-field" placeholder="Enter city name" id="locationInput">
+                
+            </div>
+
+            <!-- Question 9: Reference/Style -->
+            <div class="question-container" id="q9">
+                <div class="question-title">Got a reference or visual style in mind?</div>
+                <div class="question-subtitle">Upload moodboards, past event footage, or inspo videos that match the vibe you're going for</div>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div>📁 Upload files (PDFs, Images, Docs)</div>
+                    <input type="file" id="fileInput" style="display: none;" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                </div>
+                <input type="url" class="input-field" placeholder="Or paste links (YouTube, Vimeo, Pinterest, Google Drive)" id="linksInput">
+            </div>
+
+            <!-- Question 10: Deliverables -->
+            <div class="question-container" id="q10">
+                <div class="question-title">What do you want us to deliver after the event?</div>
+                <div class="question-subtitle">Pick one or more options — we'll customize your package</div>
+                <div class="checkbox-container">
+                    <div class="checkbox-item" onclick="toggleDeliverable('photos')">
+                        📸 Final Edited Photos
+                        <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.8;">Beautiful, high-quality pictures — retouched and ready to share</div>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleDeliverable('reels')">
+                        📱 Short Social Reels (15–30 seconds)
+                        <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.8;">Quick, eye-catching videos for Instagram, reels, or stories</div>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleDeliverable('recap')">
+                        🎬 Full Event Recap Video
+                        <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.8;">A cinematic summary of your entire event</div>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleDeliverable('highlights')">
+                        ⭐ Event Highlights Video
+                        <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.8;">Snappy cutdown of the best moments</div>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleDeliverable('raw')">
+                        🎥 RAW Footage
+                        <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.8;">Unedited video files — for your own use or editor</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 11: Timeline -->
+            <div class="question-container" id="q11">
+                <div class="question-title">When do you need the deliverables?</div>
+                <input type="date" class="input-field" id="deliveryDate">
+            </div>
+
+            <!-- Budget Calculation Loader -->
+            <div class="loader" id="budgetLoader">
+                <div class="spinner"></div>
+                <h3>Calculating your budget...</h3>
+                <p>Based on your selections, we're preparing a customized quote</p>
+            </div>
+
+            <!-- Budget Result -->
+            <div class="budget-result" id="budgetResult">
+                <h3>Based on what you've selected so far...</h3>
+                <div class="budget-amount" id="budgetAmount">$2,500 - $8,500</div>
+                <p style="margin-bottom: 30px;"><em>*actual range varies based on final details</em></p>
+                
+                <div class="edit-summary" id="editSummary">
+                    <h3>📝 Your Selections</h3>
+                    <div id="summaryContent"></div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <h4 style="margin-bottom: 15px;">Would you like to proceed?</h4>
+                    <button class="primary-button" onclick="submitForm()">✅ Yes, I'm OK with This – Request a Quote</button>
+                    <button class="secondary-button" onclick="enterCustomBudget()">💰 Enter My Own Budget</button>
+                </div>
+                
+                <div id="customBudgetInput" style="display: none; margin-bottom: 20px;">
+                    <input type="number" class="input-field" placeholder="Enter your budget ($)" id="customBudget">
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="navigation" id="navigation">
+                <button class="secondary-button" onclick="goBack()" id="backBtn">← Back</button>
+                <button class="primary-button" onclick="nextQuestion()" id="nextBtn">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let answers = {};
+        let selectedDeliverables = [];
+        
+        const totalQuestions = 12;
+
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function selectOption(questionNum, value) {
+            // Remove selected class from all options in current question
+            const currentContainer = document.getElementById(`q${questionNum}`);
+            const options = currentContainer.querySelectorAll('.option-button');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            event.target.classList.add('selected');
+            
+            // Store answer
+            answers[questionNum] = value;
+            
+            // Handle special cases
+            if (questionNum === 1 && value === 'other') {
+                document.getElementById('otherEventInput').style.display = 'block';
+            } else if (questionNum === 1) {
+                document.getElementById('otherEventInput').style.display = 'none';
+            }
+            
+            if (questionNum === 3 && value === 'multi-day') {
+                document.getElementById('multiDayInput').style.display = 'block';
+            } else if (questionNum === 3) {
+                document.getElementById('multiDayInput').style.display = 'none';
+            }
+
+            // Auto-advance for most questions
+            if (questionNum !== 8) {
+                setTimeout(() => {
+                    nextQuestion();
+                }, 500);
+            }
+        }
+
+        function toggleDeliverable(type) {
+            const element = event.target.closest('.checkbox-item');
+            
+            if (selectedDeliverables.includes(type)) {
+                selectedDeliverables = selectedDeliverables.filter(item => item !== type);
+                element.classList.remove('selected');
+            } else {
+                selectedDeliverables.push(type);
+                element.classList.add('selected');
+            }
+            
+            answers[10] = selectedDeliverables;
+        }
+
+        function validateLocationAndNext() {
+            const location = document.getElementById('locationInput').value.trim();
+            if (!location) {
+                alert('Please enter your event location');
+                return;
+            }
+            answers[8] = location;
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === 11) {
+                // Get delivery date
+                const deliveryDate = document.getElementById('deliveryDate').value;
+                if (!deliveryDate) {
+                    alert('Please select a delivery date');
+                    return;
+                }
+                answers[11] = deliveryDate;
+                
+                // Show budget calculation
+                showBudgetCalculation();
+                return;
+            }
+
+            // Hide current question
+            document.getElementById(`q${currentQuestion}`).classList.remove('active');
+            
+            // Show next question
+            currentQuestion++;
+            
+            // Skip production support question for small events
+            if (currentQuestion === 5 && answers[4] === 'small') {
+                currentQuestion++;
+            }
+            
+            document.getElementById(`q${currentQuestion}`).classList.add('active');
+            updateProgress();
+        }
+
+        function goBack() {
+            if (currentQuestion === 0) return;
+            
+            document.getElementById(`q${currentQuestion}`).classList.remove('active');
+            currentQuestion--;
+            
+            // Skip production support question for small events when going back
+            if (currentQuestion === 5 && answers[4] === 'small') {
+                currentQuestion--;
+            }
+            
+            document.getElementById(`q${currentQuestion}`).classList.add('active');
+            updateProgress();
+        }
+
+        function showBudgetCalculation() {
+            // Hide current question and navigation
+            document.getElementById(`q${currentQuestion}`).classList.remove('active');
+            document.getElementById('navigation').style.display = 'none';
+            
+            // Show loader
+            document.getElementById('budgetLoader').classList.add('active');
+            
+            // Calculate budget (simulate calculation time)
+            setTimeout(() => {
+                document.getElementById('budgetLoader').classList.remove('active');
+                displayBudgetResult();
+            }, 4000);
+        }
+
+        function displayBudgetResult() {
+            // Calculate estimated budget based on answers
+            let minBudget = 1500;
+            let maxBudget = 5000;
+            
+            // Adjust based on event type
+            if (answers[1] === 'concert' || answers[1] === 'award') {
+                minBudget += 1000;
+                maxBudget += 3000;
+            }
+            
+            // Adjust based on duration
+            if (answers[3] === 'multi-day') {
+                const days = parseInt(document.getElementById('multiDayNumber').value) || 2;
+                minBudget *= days * 0.8;
+                maxBudget *= days * 0.8;
+            }
+            
+            // Adjust based on audience size
+            if (answers[4] === 'large' || answers[4] === 'massive') {
+                minBudget += 1500;
+                maxBudget += 4000;
+            }
+            
+            // Adjust based on production support
+            if (answers[5] === 'yes') {
+                minBudget += 2000;
+                maxBudget += 5000;
+            }
+            
+            // Adjust based on drone shots
+            if (answers[6] === 'yes') {
+                minBudget += 500;
+                maxBudget += 1500;
+            }
+            
+            // Adjust based on deliverables
+            minBudget += selectedDeliverables.length * 200;
+            maxBudget += selectedDeliverables.length * 800;
+            
+            document.getElementById('budgetAmount').textContent = `$${minBudget.toLocaleString()} - $${maxBudget.toLocaleString()}`;
+            
+            // Generate summary
+            generateSummary();
+            
+            document.getElementById('budgetResult').classList.add('active');
+        }
+
+        function generateSummary() {
+            const summaryContent = document.getElementById('summaryContent');
+            const summaryItems = [];
+            
+            const questionLabels = {
+                1: 'Event Type',
+                2: 'Capture Style',
+                3: 'Duration',
+                4: 'Audience Size',
+                5: 'Production Support',
+                6: 'Drone Shots',
+                7: 'Same Day Highlights',
+                8: 'Location',
+                10: 'Deliverables',
+                11: 'Delivery Date'
+            };
+            
+            Object.keys(answers).forEach(key => {
+                if (questionLabels[key] && answers[key]) {
+                    let value = answers[key];
+                    if (key === '10') {
+                        value = selectedDeliverables.join(', ');
+                    }
+                    summaryItems.push(`
+                        <div class="edit-item">
+                            <span><strong>${questionLabels[key]}:</strong> ${value}</span>
+                            <a href="#" class="edit-button" onclick="editQuestion(${key})">Edit</a>
+                        </div>
+                    `);
+                }
+            });
+            
+            summaryContent.innerHTML = summaryItems.join('');
+        }
+
+        function editQuestion(questionNum) {
+            // Hide budget result
+            document.getElementById('budgetResult').classList.remove('active');
+            
+            // Show navigation
+            document.getElementById('navigation').style.display = 'flex';
+            
+            // Go to specific question
+                       currentQuestion = parseInt(questionNum);
+            // Hide all question containers
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            // Show the selected one
+            document.getElementById(`q${currentQuestion}`).classList.add('active');
+            updateProgress();
+        }
+
+        function submitForm() {
+            alert("Your request has been submitted! We'll get back to you shortly.");
+            // In a real app, send data to server here
+        }
+
+        function enterCustomBudget() {
+            const inputBox = document.getElementById('customBudgetInput');
+            if (inputBox.style.display === 'none') {
+                inputBox.style.display = 'block';
+            } else {
+                const customBudget = document.getElementById('customBudget').value;
+                if (!customBudget || isNaN(customBudget) || customBudget < 100) {
+                    alert('Please enter a valid custom budget.');
+                    return;
+                }
+
+                document.getElementById('budgetAmount').textContent = `$${parseInt(customBudget).toLocaleString()} (Custom)`;
+                inputBox.style.display = 'none';
+            }
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
