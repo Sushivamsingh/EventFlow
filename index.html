@@ -591,10 +591,11 @@
             }
 
             // Auto-advance for most questions
-            if (questionNum !== 8) {
-                setTimeout(() => {
-                    nextQuestion();
-                }, 500);
+          if (questionNum !== 8 && !(questionNum === 3 && value === 'multi-day')) {
+    setTimeout(() => {
+        nextQuestion();
+    }, 500);
+}
             }
         }
 
