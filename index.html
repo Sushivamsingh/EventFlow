@@ -1078,9 +1078,19 @@
 
             <!-- Question 11: Timeline -->
             <div class="question-container" id="q11">
-                <div class="question-title">When do you need the deliverables?</div>
-                <input type="date" class="input-field" id="deliveryDate">
-            </div>
+  <div class="question-title">When is your event scheduled, and when would you like to receive the final deliverables?</div>
+<div class="date-subtext">Event date</div>
+  <div class="date-wrapper">
+    <input type="date" class="input-field" id="deliveryDate">
+  </div>
+    <label class="field-label" for="deliveryOption">Delivery preference</label>
+  <select class="input-field" id="deliveryOption">
+    <option value="" disabled selected>Select delivery option</option>
+    <option value="fast">Fast Delivery (1 Day)</option>
+    <option value="standard">Standard Delivery (2 Weeks)</option>
+    <option value="free">Free Delivery (Flexible)</option>
+  </select>
+</div>
 
             <!-- Budget Calculation Loader -->
             <div class="loader" id="budgetLoader">
